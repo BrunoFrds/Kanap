@@ -9,6 +9,7 @@ dataCanape.then((response) => {
       const imgCanape = list[i].imageUrl;
       const nameCanape = list[i].name;
       const desCanape = list[i].description;
+      const altDesc = list[i].altTxt;
 
       // Création d'une variable pour l'élément items
       const items = document.getElementById("items");
@@ -26,8 +27,9 @@ dataCanape.then((response) => {
 
       // Création des éléments image, nom et description
       const imageCanape = document.createElement("img");
+      const altCanape = document.createElement("p");
       imageCanape.src = list[i].imageUrl;
-      imageCanape.setAttribute("alt", "");
+      imageCanape.setAttribute("alt", (altCanape.innerHTML = altDesc));
       imageCanape.classList.add("imageCanape");
       const nomCanape = document.createElement("h3");
       nomCanape.classList.add("productName");
