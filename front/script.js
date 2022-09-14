@@ -9,6 +9,9 @@ dataCanape.then((response) => {
       const imgCanape = list[i].imageUrl;
       const nameCanape = list[i].name;
       const desCanape = list[i].description;
+
+      // Création d'une variable pour l'élément items
+      const items = document.getElementById("items");
     }
   });
 });
