@@ -12,6 +12,12 @@ dataCanape.then((response) => {
 
       // Création d'une variable pour l'élément items
       const items = document.getElementById("items");
+
+      // Création du lien produit et ajout dans la section items
+      const lienCanape = document.createElement("a");
+      lienCanape.setAttribute("href", "#");
+      items.appendChild(lienCanape);
+      lienCanape.classList.add("lienCanape");
     }
   });
 });
