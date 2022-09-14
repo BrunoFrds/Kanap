@@ -33,6 +33,11 @@ dataCanape.then((response) => {
       nomCanape.classList.add("productName");
       const descriptionCanape = document.createElement("p");
       descriptionCanape.classList.add("productDescription");
+
+      // Ajout des éléments image, nom et description dans la card
+      cardCanape.appendChild(imageCanape);
+      cardCanape.appendChild(nomCanape);
+      cardCanape.appendChild(descriptionCanape);
     }
   });
 });
