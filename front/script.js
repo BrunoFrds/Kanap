@@ -18,6 +18,11 @@ dataCanape.then((response) => {
       lienCanape.setAttribute("href", "#");
       items.appendChild(lienCanape);
       lienCanape.classList.add("lienCanape");
+
+      // Création de la card produit et ajout dans le lien
+      const cardCanape = document.createElement("article");
+      lienCanape.appendChild(cardCanape);
+      cardCanape.classList.add("cardCanape");
     }
   });
 });
