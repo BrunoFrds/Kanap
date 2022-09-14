@@ -38,6 +38,10 @@ dataCanape.then((response) => {
       cardCanape.appendChild(imageCanape);
       cardCanape.appendChild(nomCanape);
       cardCanape.appendChild(descriptionCanape);
+
+      // Affichage des informations nom et description
+      nomCanape.innerHTML = nameCanape;
+      descriptionCanape.innerHTML = desCanape;
     }
   });
 });
