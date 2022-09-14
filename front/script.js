@@ -23,6 +23,16 @@ dataCanape.then((response) => {
       const cardCanape = document.createElement("article");
       lienCanape.appendChild(cardCanape);
       cardCanape.classList.add("cardCanape");
+
+      // Création des éléments image, nom et description
+      const imageCanape = document.createElement("img");
+      imageCanape.src = list[i].imageUrl;
+      imageCanape.setAttribute("alt", "");
+      imageCanape.classList.add("imageCanape");
+      const nomCanape = document.createElement("h3");
+      nomCanape.classList.add("productName");
+      const descriptionCanape = document.createElement("p");
+      descriptionCanape.classList.add("productDescription");
     }
   });
 });
