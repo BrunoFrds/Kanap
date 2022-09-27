@@ -71,12 +71,35 @@ dataCanape.then((response) => {
           const colorValue = colorChoice.value;
           const quantityValue = quantityChoice.value;
           // Récupération dans un tableau des informations pour le panier
-          const infoKanap = [idItemList, colorValue, quantityValue];
+          const infoKanap = {
+            id: idItemList,
+            color: colorValue,
+            quantity: quantityValue,
+          };
           console.log(infoKanap);
 
-          const infoKanapJson = JSON.stringify(infoKanap);
-          console.log(infoKanapJson);
-          localStorage.setItem("Infos produit", infoKanapJson);
+          // Récupération des données du localStorage au format JS
+          let infoKanapLocalStorage = JSON.parse(
+            localStorage.getItem("Infos produit")
+          );
+
+          if (infoKanapLocalStorage) {
+            // Ajout des nouvelles données
+            infoKanapLocalStorage.push(infoKanap);
+            // Traduction des données du tableau en format JSON
+            const infoKanapJson = JSON.stringify(infoKanapLocalStorage);
+            // Stockage des données dans le localStorage
+            localStorage.setItem("Infos produit", infoKanapJson);
+          } else {
+            // Création d'un nouveau tableau
+            infoKanapLocalStorage = [];
+            // Ajout des nouvelles données
+            infoKanapLocalStorage.push(infoKanap);
+            // Traduction des données du tableau en format JSON
+            const infoKanapJson = JSON.stringify(infoKanapLocalStorage);
+            // Stockage des données dans le localStorage
+            localStorage.setItem("Infos produit", infoKanapJson);
+          }
         });
       }
     }
