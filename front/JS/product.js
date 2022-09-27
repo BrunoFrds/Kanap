@@ -57,6 +57,27 @@ dataCanape.then((response) => {
           // Ajout des options au select
           selectColors.appendChild(colorOptionJ);
         }
+
+        // Selection des options pour la couleur et la quantité
+        const colorChoice = document.getElementById("colors");
+        const quantityChoice = document.getElementById("quantity");
+
+        // Ajout d'une variable pour le bouton panier et l'empecher d'actualiser la page
+        const btnPanier = document.getElementById("addToCart");
+        btnPanier.addEventListener("click", (Event) => {
+          Event.preventDefault();
+
+          // Ajout du choix de la couleur et de la quantité dans une variable
+          const colorValue = colorChoice.value;
+          const quantityValue = quantityChoice.value;
+          // Récupération dans un tableau des informations pour le panier
+          const infoKanap = [idItemList, colorValue, quantityValue];
+          console.log(infoKanap);
+
+          const infoKanapJson = JSON.stringify(infoKanap);
+          console.log(infoKanapJson);
+          localStorage.setItem("Infos produit", infoKanapJson);
+        });
       }
     }
   });
