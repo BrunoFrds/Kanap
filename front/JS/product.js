@@ -76,29 +76,27 @@ dataCanape.then((response) => {
             color: colorValue,
             quantity: quantityValue,
           };
-          console.log(infoKanap);
 
           // Récupération des données du localStorage au format JS
           let infoKanapLocalStorage = JSON.parse(
             localStorage.getItem("Infos produit")
           );
-
-          if (infoKanapLocalStorage) {
+          // Création d'une fonction pour l'ajout de donnée dans le localStorage
+          const ajoutProduitLocalStorage = () => {
             // Ajout des nouvelles données
             infoKanapLocalStorage.push(infoKanap);
             // Traduction des données du tableau en format JSON
             const infoKanapJson = JSON.stringify(infoKanapLocalStorage);
             // Stockage des données dans le localStorage
             localStorage.setItem("Infos produit", infoKanapJson);
+          };
+          // Création de la condition pour ajouter des produits dans le localStorage
+          if (infoKanapLocalStorage) {
+            ajoutProduitLocalStorage();
           } else {
             // Création d'un nouveau tableau
             infoKanapLocalStorage = [];
-            // Ajout des données
-            infoKanapLocalStorage.push(infoKanap);
-            // Traduction des données du tableau en format JSON
-            const infoKanapJson = JSON.stringify(infoKanapLocalStorage);
-            // Stockage des données dans le localStorage
-            localStorage.setItem("Infos produit", infoKanapJson);
+            ajoutProduitLocalStorage();
           }
         });
       }
