@@ -71,7 +71,7 @@ dataCanape.then((response) => {
           const colorValue = colorChoice.value;
           const quantityValue = quantityChoice.value;
           // Récupération dans un tableau des informations pour le panier
-          const infoKanap = {
+          let infoKanap = {
             id: idItemList,
             color: colorValue,
             quantity: quantityValue,
@@ -93,7 +93,7 @@ dataCanape.then((response) => {
           } else {
             // Création d'un nouveau tableau
             infoKanapLocalStorage = [];
-            // Ajout des nouvelles données
+            // Ajout des données
             infoKanapLocalStorage.push(infoKanap);
             // Traduction des données du tableau en format JSON
             const infoKanapJson = JSON.stringify(infoKanapLocalStorage);
