@@ -12,6 +12,7 @@ dataCanape.then((response) => {
     for (let i = 0; i < list.length; i++) {
       const idItemList = list[i]._id;
       if (idItemList === urlId) {
+        const imgItemList = list[i].imageUrl;
         const altItemList = list[i].altTxt;
         const nomItemList = list[i].name;
         const priceItemList = list[i].price;
@@ -73,30 +74,55 @@ dataCanape.then((response) => {
           // Récupération dans un tableau des informations pour le panier
           let infoKanap = {
             id: idItemList,
+            img: imgItemList,
+            alt: altItemList,
+            name: nomItemList,
             color: colorValue,
-            quantity: quantityValue,
+            price: priceItemList,
+            quantity: Number(quantityValue),
           };
-
-          // Récupération des données du localStorage au format JS
-          let infoKanapLocalStorage = JSON.parse(
-            localStorage.getItem("Infos produit")
-          );
-          // Création d'une fonction pour l'ajout de donnée dans le localStorage
-          const ajoutProduitLocalStorage = () => {
-            // Ajout des nouvelles données
-            infoKanapLocalStorage.push(infoKanap);
-            // Traduction des données du tableau en format JSON
-            const infoKanapJson = JSON.stringify(infoKanapLocalStorage);
-            // Stockage des données dans le localStorage
-            localStorage.setItem("Infos produit", infoKanapJson);
-          };
-          // Création de la condition pour ajouter des produits dans le localStorage
-          if (infoKanapLocalStorage) {
-            ajoutProduitLocalStorage();
-          } else {
-            // Création d'un nouveau tableau
-            infoKanapLocalStorage = [];
-            ajoutProduitLocalStorage();
+          // Récupération des données du localStorage
+          let produitPanier = JSON.parse(localStorage.getItem("Infos produit"));
+          console.log(produitPanier);
+          // Envoie des données du tableau dans le local storage
+          if (produitPanier == null) {
+            produitPanier = [];
+            produitPanier.push(infoKanap);
+            localStorage.setItem(
+              "Infos produit",
+              JSON.stringify(produitPanier)
+            );
+            // Incrémentation de la quantité quand l'id et la couleur sont identique
+          } else if (produitPanier != null) {
+            for (let k = 0; k < produitPanier.length; k++) {
+              if (
+                produitPanier[k].id == infoKanap.id &&
+                produitPanier[k].color == infoKanap.color
+              ) {
+                return (
+                  (produitPanier[k].quantity += infoKanap.quantity),
+                  localStorage.setItem(
+                    "Infos produit",
+                    JSON.stringify(produitPanier)
+                  )
+                );
+              }
+            }
+            for (let k = 0; k < produitPanier.length; k++) {
+              if (
+                (produitPanier[k].id == infoKanap.id &&
+                  produitPanier[k].color != infoKanap.color) ||
+                produitPanier[k].id != infoKanap.id
+              ) {
+                return (
+                  produitPanier.push(infoKanap),
+                  localStorage.setItem(
+                    "Infos produit",
+                    JSON.stringify(produitPanier)
+                  )
+                );
+              }
+            }
           }
         });
       }
