@@ -1,59 +1,53 @@
 // Envoie de la requête HTTP auprès du service web
-const dataCanape = fetch("http://localhost:3000/api/products");
-// Récupération des données depuis l'API
-dataCanape.then((response) => {
-  const listCanape = response.json();
-  listCanape.then((list) => {
-    for (let i = 0; i < list.length; i++) {
-      const idList = list[i]._id;
-      const altList = list[i].altTxt;
-      const nomList = list[i].name;
-      const descriptionList = list[i].description;
+fetch("http://localhost:3000/api/products")
+  // Récupération des données depuis l'API
+  .then((response) => response.json())
+  // Transfert des données de l'API vers la page d'accueil
+  .then((dataItem) => {
+    // Boucle permettant de générer les cards des différents produits
+    for (let i = 0; i < dataItem.length; i++) {
+      const dataId = dataItem[i]._id;
+      const dataAlt = dataItem[i].altTxt;
+      const dataName = dataItem[i].name;
+      const dataDescription = dataItem[i].description;
 
       // Création d'une variable pour l'élément items
       const items = document.getElementById("items");
 
-      // Création du lien produit et ajout dans la section items
-      const lienKanap = document.createElement("a");
-      const urlIdKanap =
-        "http://127.0.0.1:5500/front/html/product.html?id=" + idList;
-      /*
-      const urlProduct = new URL(
-        "http://127.0.0.1:5500/front/html/product.html"
-      );
-      const params = new URLSearchParams(urlProduct.search);
-      params.append("id", idList);
-
-      console.log(params);
-      */
-      lienKanap.setAttribute("href", urlIdKanap);
-      items.appendChild(lienKanap);
-      lienKanap.classList.add("lienCanape");
+      // Création du lien produit et ajout dans la section "items"
+      const lienItem = document.createElement("a");
+      items.appendChild(lienItem);
+      lienItem.classList.add("lienItem");
+      // Création du lien avec l'Id du produit
+      lienItem.addEventListener("click", () => {
+        window.location = "product.html?id=" + dataId;
+      });
 
       // Création de la card produit et ajout dans le lien
-      const cardsKanap = document.createElement("article");
-      lienKanap.appendChild(cardsKanap);
-      cardsKanap.classList.add("cardsCanape");
+      const cardItem = document.createElement("article");
+      lienItem.appendChild(cardItem);
+      cardItem.classList.add("cardItem");
 
-      // Création des éléments image, nom et description
-      const imageKanap = document.createElement("img");
-      const altKanap = document.createElement("p");
-      imageKanap.src = list[i].imageUrl;
-      imageKanap.setAttribute("alt", (altKanap.innerHTML = altList));
-      imageKanap.classList.add("imageCanape");
-      const nomKanap = document.createElement("h3");
-      nomKanap.classList.add("productName");
-      const descriptionKanap = document.createElement("p");
-      descriptionKanap.classList.add("productDescription");
+      // Création de l'élément pour l'image
+      const imgItem = document.createElement("img");
+      const altItem = document.createElement("p");
+      imgItem.src = dataItem[i].imageUrl;
+      imgItem.setAttribute("alt", (altItem.innerHTML = dataAlt));
+      imgItem.classList.add("imgItem");
+      // Création de l'élément pour le nom
+      const nameItem = document.createElement("h3");
+      nameItem.classList.add("productName");
+      // Création de l'élément pour la description
+      const descriptionItem = document.createElement("p");
+      descriptionItem.classList.add("productDescription");
 
       // Ajout des éléments image, nom et description dans la card
-      cardsKanap.appendChild(imageKanap);
-      cardsKanap.appendChild(nomKanap);
-      cardsKanap.appendChild(descriptionKanap);
+      cardItem.appendChild(imgItem);
+      cardItem.appendChild(nameItem);
+      cardItem.appendChild(descriptionItem);
 
-      // Affichage des informations nom et description
-      nomKanap.innerHTML = nomList;
-      descriptionKanap.innerHTML = descriptionList;
+      // Affichage des informations "nom" et "description"
+      nameItem.innerHTML = dataName;
+      descriptionItem.innerHTML = dataDescription;
     }
   });
-});
