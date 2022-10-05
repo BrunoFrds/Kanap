@@ -2,14 +2,15 @@
 fetch("http://localhost:3000/api/products")
   // Récupération des données depuis l'API
   .then((response) => response.json())
+
   // Transfert des données de l'API vers la page d'accueil
   .then((dataItem) => {
     // Boucle permettant de générer les cards des différents produits
-    for (let i = 0; i < dataItem.length; i++) {
-      const dataId = dataItem[i]._id;
-      const dataAlt = dataItem[i].altTxt;
-      const dataName = dataItem[i].name;
-      const dataDescription = dataItem[i].description;
+    for (const infoItem of dataItem) {
+      const dataId = infoItem._id;
+      const dataAlt = infoItem.altTxt;
+      const dataName = infoItem.name;
+      const dataDescription = infoItem.description;
 
       // Création d'une variable pour l'élément items
       const items = document.getElementById("items");
@@ -18,6 +19,7 @@ fetch("http://localhost:3000/api/products")
       const lienItem = document.createElement("a");
       items.appendChild(lienItem);
       lienItem.classList.add("lienItem");
+
       // Création du lien avec l'Id du produit
       lienItem.addEventListener("click", () => {
         window.location = "product.html?id=" + dataId;
@@ -31,12 +33,14 @@ fetch("http://localhost:3000/api/products")
       // Création de l'élément pour l'image
       const imgItem = document.createElement("img");
       const altItem = document.createElement("p");
-      imgItem.src = dataItem[i].imageUrl;
+      imgItem.src = infoItem.imageUrl;
       imgItem.setAttribute("alt", (altItem.innerHTML = dataAlt));
       imgItem.classList.add("imgItem");
+
       // Création de l'élément pour le nom
       const nameItem = document.createElement("h3");
       nameItem.classList.add("productName");
+
       // Création de l'élément pour la description
       const descriptionItem = document.createElement("p");
       descriptionItem.classList.add("productDescription");

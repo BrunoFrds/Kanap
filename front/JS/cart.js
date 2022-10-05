@@ -1,8 +1,9 @@
 // Récupération des données dans le local Storage
-let getPanier = JSON.parse(localStorage.getItem("Infos produit"));
+let getPanier = JSON.parse(localStorage.getItem("cart"));
 console.log(getPanier);
 
-for (let i = 0; i < getPanier.length; i++) {
+// Création d'une boucle qui va parcourir chaque produit dans le panier
+for (const produitPanier of getPanier) {
   // Ajout d'une variable pour la section cart__items
   const cartItems = document.getElementById("cart__items");
 
@@ -19,8 +20,8 @@ for (let i = 0; i < getPanier.length; i++) {
   //Création et ajout de l'image
   const imgCartItem = document.createElement("img");
   const altCartItem = document.createElement("p");
-  imgCartItem.src = getPanier[i].img;
-  imgCartItem.setAttribute("alt", (altCartItem.innerHTML = getPanier[i].alt));
+  imgCartItem.src = produitPanier.img;
+  imgCartItem.setAttribute("alt", (altCartItem.innerHTML = produitPanier.alt));
   cartItemImg.appendChild(imgCartItem);
 
   // Création et ajout de la div cart__item__content
@@ -33,21 +34,24 @@ for (let i = 0; i < getPanier.length; i++) {
 
   // Création et ajout du nom
   const cartItemName = document.createElement("h2");
-  cartItemName.innerHTML = getPanier[i].name;
+  cartItemName.innerHTML = produitPanier.name;
   cartItemContentDescription.appendChild(cartItemName);
+
   // Création et ajout de la couleur
   const cartItemColor = document.createElement("p");
-  cartItemColor.innerHTML = getPanier[i].color;
+  cartItemColor.innerHTML = produitPanier.color;
   cartItemContentDescription.appendChild(cartItemColor);
-  // Création et ajout du prix à partir de l'API
+
+  //--- Création et ajout du prix à partir des données de l'API ---
   // Envoie de la requête HTTP auprès du service web
-  fetch("http://localhost:3000/api/products/" + getPanier[i].id)
+  fetch("http://localhost:3000/api/products/" + produitPanier.id)
     // Récupération des données depuis l'API
     .then((response) => response.json())
+
     // Transfert des données de l'API vers le panier
     .then((dataPrice) => {
       const cartItemPrice = document.createElement("p");
-      cartItemPrice.innerHTML = dataPrice.price;
+      cartItemPrice.innerHTML = dataPrice.price + " €";
       cartItemContentDescription.appendChild(cartItemPrice);
     });
 
@@ -58,7 +62,6 @@ for (let i = 0; i < getPanier.length; i++) {
   // Création et ajout de la div contenant la quantité
   const cartItemContentSettingsQuantity = document.createElement("div");
   cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
-
   const cartItemQuantity = document.createElement("p");
   cartItemQuantity.innerHTML = "Qté : ";
   cartItemContentSettingsQuantity.appendChild(cartItemQuantity);
@@ -70,41 +73,42 @@ for (let i = 0; i < getPanier.length; i++) {
   itemQuantity.setAttribute("name", "itemQuantity");
   itemQuantity.setAttribute("min", "1");
   itemQuantity.setAttribute("max", "100");
-  itemQuantity.value = getPanier[i].quantity;
+  itemQuantity.value = produitPanier.quantity;
   cartItemContentSettingsQuantity.appendChild(itemQuantity);
-  // Création d'une dataset pour l'id et la couleur des produits dans les inputs
-  itemQuantity.setAttribute("data-id", getPanier[i].id);
-  itemQuantity.setAttribute("data-color", getPanier[i].color);
-  itemQuantity.setAttribute("data-value", getPanier[i].quantity);
+
+  // Création d'une dataset pour l'id, la couleur des produits et la valeur des inputs
+  itemQuantity.setAttribute("data-id", produitPanier.id);
+  itemQuantity.setAttribute("data-color", produitPanier.color);
+  itemQuantity.setAttribute("data-value", produitPanier.quantity);
 
   // Création et ajout du bouton supprimer
   const cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
-
   const buttonDelete = document.createElement("button");
   buttonDelete.innerHTML = "Supprimer";
   cartItemContentSettingsDelete.appendChild(buttonDelete);
 }
+
 // Création d'une variable pour les inputs
 let inputQuantity = document.querySelectorAll(".itemQuantity");
+
 // Création d'une boucle qui va parcourir la nodeList contenant les inputs des différents produits
 inputQuantity.forEach((newQuantity) => {
-  // Création d'un eventListener au changement de la quantité
-  newQuantity.addEventListener("input", (event) => {
-    for (let j = 0; j < getPanier.length; j++) {
+  // Création d'un eventListener au changement de la valeur dans le champs de texte
+  newQuantity.addEventListener("change", (event) => {
+    for (const inputItem of getPanier) {
       // Création d'une variable pour la nouvelle valeur de l'input
       let inputValue = event.target.valueAsNumber;
+
       // Modification de la data-value avec la nouvelle valeur
       newQuantity.setAttribute("data-value", inputValue);
       if (
-        getPanier[j].id == newQuantity.dataset.id &&
-        getPanier[j].color == newQuantity.dataset.color
+        inputItem.id == newQuantity.dataset.id &&
+        inputItem.color == newQuantity.dataset.color
       )
         // Modification de la quantité du produit dans le tableau du panier et enregistrement dans le local storage
-        return (
-          (getPanier[j].quantity = newQuantity.dataset.value),
-          localStorage.setItem("Infos produit", JSON.stringify(getPanier))
-        );
+        (inputItem.quantity = newQuantity.dataset.value),
+          localStorage.setItem("cart", JSON.stringify(getPanier)).break;
     }
   });
 });
