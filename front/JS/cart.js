@@ -52,6 +52,7 @@ for (const produitPanier of getPanier) {
     .then((dataPrice) => {
       const cartItemPrice = document.createElement("p");
       cartItemPrice.innerHTML = dataPrice.price + " €";
+      cartItemPrice.classList.add("itemPrice");
       cartItemContentDescription.appendChild(cartItemPrice);
     });
 
@@ -101,6 +102,9 @@ let inputQuantity = document.querySelectorAll(".itemQuantity");
 for (const newQuantity of inputQuantity) {
   // Création d'un eventListener au changement de la valeur dans le champs de texte
   newQuantity.addEventListener("change", (event) => {
+    // Rechargement de la page au changement de la quantité
+    window.location.reload();
+
     // Création d'une variable pour la nouvelle valeur de l'input
     let inputValue = event.target.valueAsNumber;
 
@@ -114,7 +118,7 @@ for (const newQuantity of inputQuantity) {
         inputItem.color == newQuantity.dataset.color
       ) {
         // Modification de la quantité du produit dans le tableau du panier et enregistrement dans le local storage
-        (inputItem.quantity = newQuantity.dataset.value),
+        (inputItem.quantity = Number(newQuantity.dataset.value)),
           localStorage.setItem("cart", JSON.stringify(getPanier));
       }
     }
@@ -123,7 +127,6 @@ for (const newQuantity of inputQuantity) {
 
 // Création d'un variable pour les boutons "supprimer"
 let btnDelete = document.querySelectorAll(".btnDelete");
-console.log(btnDelete);
 
 // Création d'une boucle qui va parcourir la nodelist contenant les boutons
 for (const deleteOption of btnDelete) {
@@ -146,3 +149,63 @@ for (const deleteOption of btnDelete) {
     }
   });
 }
+
+// Création d'une variable pour le span "totalQuantity"
+const totalQuantity = document.getElementById("totalQuantity");
+
+// Création d'une variable pour la quantité totale
+let totalQuantityValue = 0;
+
+// Création d'une boucle qui va parcourir les éléments du panier
+for (const productQuantity of getPanier) {
+  // Nombre de produits total
+  totalQuantityValue += productQuantity.quantity;
+
+  // Ajout du total dans le span
+  totalQuantity.innerHTML = totalQuantityValue;
+}
+
+// Création d'une variable pour le span "totalPrice"
+const totalPrice = document.getElementById("totalPrice");
+
+// Création d'une variable pour le prix total
+let totalPriceValue = 0;
+
+// Création d'une boucle qui va parcourir les éléments du panier
+for (const productPrice of getPanier) {
+  // Récupération du prix de chaque produit
+
+  // Envoie de la requête HTTP auprès du service web
+  fetch("http://localhost:3000/api/products/" + productPrice.id)
+    // Récupération des données depuis l'API
+    .then((response) => response.json())
+
+    // Transfert des données de l'API vers le panier
+    .then((dataPrice) => {
+      const itemPrice = dataPrice.price;
+
+      // Prix total de chaque lot d'article
+      let totalPriceProduct = productPrice.quantity * itemPrice;
+
+      // Prix total du panier
+      totalPriceValue += totalPriceProduct;
+
+      // Ajout du total dans le span
+      totalPrice.innerHTML = totalPriceValue;
+    });
+}
+
+const firstNameClient = document.getElementById("firstName");
+console.log(firstNameClient);
+
+const lastNameClient = document.getElementById("lastName");
+console.log(lastNameClient);
+
+const adressClient = document.getElementById("address");
+console.log(adressClient);
+
+const cityClient = document.getElementById("city");
+console.log(cityClient);
+
+const emailClient = document.getElementById("email");
+console.log(emailClient);
