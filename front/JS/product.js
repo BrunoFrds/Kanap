@@ -96,7 +96,7 @@ fetch("http://localhost:3000/api/products/" + urlId)
           ) {
             (infoPanier.quantity =
               Number(infoPanier.quantity) + infoKanap.quantity),
-              localStorage.setItem("cart", JSON.stringify(produitPanier)).break;
+              localStorage.setItem("cart", JSON.stringify(produitPanier));
           }
         }
 
@@ -108,8 +108,9 @@ fetch("http://localhost:3000/api/products/" + urlId)
             infoPanier.id != infoKanap.id
           ) {
             produitPanier.push(infoKanap),
-              localStorage.setItem("cart", JSON.stringify(produitPanier)).break;
+              localStorage.setItem("cart", JSON.stringify(produitPanier));
           }
+          break;
         }
       }
     });

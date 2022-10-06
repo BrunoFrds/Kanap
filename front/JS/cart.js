@@ -76,7 +76,7 @@ for (const produitPanier of getPanier) {
   itemQuantity.value = produitPanier.quantity;
   cartItemContentSettingsQuantity.appendChild(itemQuantity);
 
-  // Création d'une dataset pour l'id, la couleur des produits et la valeur des inputs
+  // Création d'une dataset pour l'id, la couleur des produits et la quantité dans les inputs
   itemQuantity.setAttribute("data-id", produitPanier.id);
   itemQuantity.setAttribute("data-color", produitPanier.color);
   itemQuantity.setAttribute("data-value", produitPanier.quantity);
@@ -86,29 +86,63 @@ for (const produitPanier of getPanier) {
   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
   const buttonDelete = document.createElement("button");
   buttonDelete.innerHTML = "Supprimer";
+  buttonDelete.classList.add("btnDelete");
   cartItemContentSettingsDelete.appendChild(buttonDelete);
+
+  // Création d'une dataset pour l'id et la couleur des produits dans les boutons "supprimer"
+  buttonDelete.setAttribute("data-id", produitPanier.id);
+  buttonDelete.setAttribute("data-color", produitPanier.color);
 }
 
 // Création d'une variable pour les inputs
 let inputQuantity = document.querySelectorAll(".itemQuantity");
 
 // Création d'une boucle qui va parcourir la nodeList contenant les inputs des différents produits
-inputQuantity.forEach((newQuantity) => {
+for (const newQuantity of inputQuantity) {
   // Création d'un eventListener au changement de la valeur dans le champs de texte
   newQuantity.addEventListener("change", (event) => {
-    for (const inputItem of getPanier) {
-      // Création d'une variable pour la nouvelle valeur de l'input
-      let inputValue = event.target.valueAsNumber;
+    // Création d'une variable pour la nouvelle valeur de l'input
+    let inputValue = event.target.valueAsNumber;
 
-      // Modification de la data-value avec la nouvelle valeur
-      newQuantity.setAttribute("data-value", inputValue);
+    // Modification de la data-value avec la nouvelle valeur
+    newQuantity.setAttribute("data-value", inputValue);
+
+    // Création d'une boucle qui va parcourir chaque produit dans le panier
+    for (const inputItem of getPanier) {
       if (
         inputItem.id == newQuantity.dataset.id &&
         inputItem.color == newQuantity.dataset.color
-      )
+      ) {
         // Modification de la quantité du produit dans le tableau du panier et enregistrement dans le local storage
         (inputItem.quantity = newQuantity.dataset.value),
-          localStorage.setItem("cart", JSON.stringify(getPanier)).break;
+          localStorage.setItem("cart", JSON.stringify(getPanier));
+      }
     }
   });
-});
+}
+
+// Création d'un variable pour les boutons "supprimer"
+let btnDelete = document.querySelectorAll(".btnDelete");
+console.log(btnDelete);
+
+// Création d'une boucle qui va parcourir la nodelist contenant les boutons
+for (const deleteOption of btnDelete) {
+  // Création d'un eventListener au click du bouton "supprimer"
+  deleteOption.addEventListener("click", (event) => {
+    // Rechargement de la page au click
+    window.location.reload();
+
+    // Création d'une boucle qui va parcourir chaque produit dans le panier
+    for (let i = 0; i < getPanier.length; i++) {
+      if (
+        getPanier[i].id == deleteOption.dataset.id &&
+        getPanier[i].color == deleteOption.dataset.color
+      ) {
+        // Suppression de l'objet du panier
+        console.log(getPanier.splice(i, 1)),
+          // Suppression du produit du local storage
+          localStorage.setItem("cart", JSON.stringify(getPanier));
+      }
+    }
+  });
+}
