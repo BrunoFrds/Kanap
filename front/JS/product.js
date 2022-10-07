@@ -60,7 +60,7 @@ fetch("http://localhost:3000/api/products/" + urlId)
     // Création d'une variable pour le bouton "Ajouter au panier"
     const btnPanier = document.getElementById("addToCart");
 
-    // Ajout d'un eventListener pour empêcher le bouton d'actualiser la page
+    // Ajout d'un évènement pour empêcher le bouton d'actualiser la page
     btnPanier.addEventListener("click", (Event) => {
       Event.preventDefault();
 

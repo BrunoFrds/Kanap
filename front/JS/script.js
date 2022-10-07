@@ -20,7 +20,7 @@ fetch("http://localhost:3000/api/products")
       items.appendChild(lienItem);
       lienItem.classList.add("lienItem");
 
-      // Création du lien avec l'Id du produit
+      // Création d' un évènement renvoyant à la page produit
       lienItem.addEventListener("click", () => {
         window.location = "product.html?id=" + dataId;
       });

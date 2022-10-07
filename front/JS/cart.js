@@ -100,7 +100,7 @@ let inputQuantity = document.querySelectorAll(".itemQuantity");
 
 // Création d'une boucle qui va parcourir la nodeList contenant les inputs des différents produits
 for (const newQuantity of inputQuantity) {
-  // Création d'un eventListener au changement de la valeur dans le champs de texte
+  // Création d'un évènement au changement de la valeur dans le champs de texte
   newQuantity.addEventListener("change", (event) => {
     // Rechargement de la page au changement de la quantité
     window.location.reload();
@@ -130,8 +130,8 @@ let btnDelete = document.querySelectorAll(".btnDelete");
 
 // Création d'une boucle qui va parcourir la nodelist contenant les boutons
 for (const deleteOption of btnDelete) {
-  // Création d'un eventListener au click du bouton "supprimer"
-  deleteOption.addEventListener("click", (event) => {
+  // Création d'un évènement au click du bouton "supprimer"
+  deleteOption.addEventListener("click", () => {
     // Rechargement de la page au click
     window.location.reload();
 
@@ -195,17 +195,110 @@ for (const productPrice of getPanier) {
     });
 }
 
+// Création de variables pour les différents éléments du formulaire
+const cartOrderForm = document.querySelector(".cart__order__form");
+
+// Prénom
 const firstNameClient = document.getElementById("firstName");
-console.log(firstNameClient);
+const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 
+// Nom
 const lastNameClient = document.getElementById("lastName");
-console.log(lastNameClient);
+const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
 
+// Adresse
 const adressClient = document.getElementById("address");
-console.log(adressClient);
+const addressErrorMsg = document.getElementById("addressErrorMsg");
 
+// Ville
 const cityClient = document.getElementById("city");
-console.log(cityClient);
+const cityErrorMsg = document.getElementById("cityErrorMsg");
 
+// Email
 const emailClient = document.getElementById("email");
-console.log(emailClient);
+const emailErrorMsg = document.getElementById("emailErrorMsg");
+
+// Bouton "Confirmer"
+const orderBtn = document.getElementById("order");
+
+// Création d'un évènement à la validation du formulaire
+cartOrderForm.addEventListener("submit", (event) => {
+  // Ajout d'un preventDefaut pour empêcher la page de recharger au click
+  event.preventDefault();
+
+  // Création d'un objet formulaire contenant les données du formulaire
+  const formulaireValues = {
+    firstName: firstNameClient.value,
+    lastName: lastNameClient.value,
+    adress: adressClient.value,
+    city: cityClient.value,
+    email: emailClient.value,
+  };
+
+  // Création de variable Regex pour les prénom ,nom et ville
+  const regexName = /^[a-zA-ZÀ-ÿ-\s]{3,20}$/;
+
+  // Création d'une variable Regex pour l'adresse
+  const regexAddress = /^[a-zA-ZÀ-ÿ0-9-\s]+$/;
+
+  // Création d'une variable Regex pour l'email
+  const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+  // Envoie des valeurs validées du formulaire vers le local storage
+  if (
+    regexName.test(firstNameClient.value) == true &&
+    regexName.test(lastNameClient.value) == true &&
+    regexAddress.test(adressClient.value) == true &&
+    regexName.test(cityClient.value) == true &&
+    regexEmail.test(emailClient.value) == true
+  ) {
+    localStorage.setItem("client", JSON.stringify(formulaireValues));
+  }
+
+  // Ajout de conditions pour vérifier la validité des données du formulaire avec regex
+  // Prénom
+  if (regexName.test(firstNameClient.value) == true) {
+    firstNameErrorMsg.innerHTML = "";
+  } else {
+    firstNameErrorMsg.innerHTML =
+      "Le prénom ne doit contenir que des lettres ou des tirets.";
+  }
+  // Nom
+  if (regexName.test(lastNameClient.value) == true) {
+    lastNameErrorMsg.innerHTML = "";
+  } else {
+    lastNameErrorMsg.innerHTML =
+      "Le nom ne doit contenir que des lettres ou des tirets.";
+  }
+  // Adresse
+  if (regexAddress.test(adressClient.value) == true) {
+    addressErrorMsg.innerHTML = "";
+  } else {
+    addressErrorMsg.innerHTML = "L'adresse est invalide.";
+  }
+  // Ville
+  if (regexName.test(cityClient.value) == true) {
+    cityErrorMsg.innerHTML = "";
+  } else {
+    cityErrorMsg.innerHTML = "Le nom de la ville est invalide.";
+  }
+  // Email
+  if (regexEmail.test(emailClient.value) == true) {
+    emailErrorMsg.innerHTML = "";
+  } else {
+    emailErrorMsg.innerHTML = "L'email est invalide.";
+  }
+});
+
+// Garder les données du formulaire en cas de changement de page
+
+// Création d'une variable qui va récuperer les informations client du local storage
+const clientData = JSON.parse(localStorage.getItem("client"));
+if (clientData != null) {
+  // Ajout des informations dans les champs de texte
+  firstNameClient.value = clientData.firstName;
+  lastNameClient.value = clientData.lastName;
+  adressClient.value = clientData.adress;
+  cityClient.value = clientData.city;
+  emailClient.value = clientData.email;
+}
