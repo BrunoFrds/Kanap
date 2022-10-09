@@ -17,13 +17,6 @@ for (const produitPanier of getPanier) {
   cartItem.appendChild(cartItemImg);
   cartItemImg.classList.add("cart__item__img");
 
-  //Création et ajout de l'image
-  const imgCartItem = document.createElement("img");
-  const altCartItem = document.createElement("p");
-  imgCartItem.src = produitPanier.img;
-  imgCartItem.setAttribute("alt", (altCartItem.innerHTML = produitPanier.alt));
-  cartItemImg.appendChild(imgCartItem);
-
   // Création et ajout de la div cart__item__content
   const cartItemContent = document.createElement("div");
   cartItem.appendChild(cartItemContent);
@@ -32,26 +25,37 @@ for (const produitPanier of getPanier) {
   const cartItemContentDescription = document.createElement("div");
   cartItemContent.appendChild(cartItemContentDescription);
 
-  // Création et ajout du nom
-  const cartItemName = document.createElement("h2");
-  cartItemName.innerHTML = produitPanier.name;
-  cartItemContentDescription.appendChild(cartItemName);
-
   // Création et ajout de la couleur
   const cartItemColor = document.createElement("p");
   cartItemColor.innerHTML = produitPanier.color;
   cartItemContentDescription.appendChild(cartItemColor);
 
-  //--- Création et ajout du prix à partir des données de l'API ---
+  //--- Création et ajout du nom, du prix et de l'image à partir des données de l'API ---
   // Envoie de la requête HTTP auprès du service web
   fetch("http://localhost:3000/api/products/" + produitPanier.id)
     // Récupération des données depuis l'API
     .then((response) => response.json())
 
     // Transfert des données de l'API vers le panier
-    .then((dataPrice) => {
+    .then((dataProduct) => {
+      //Création et ajout de l'image
+      const imgCartItem = document.createElement("img");
+      const altCartItem = document.createElement("p");
+      imgCartItem.src = dataProduct.imageUrl;
+      imgCartItem.setAttribute(
+        "alt",
+        (altCartItem.innerHTML = dataProduct.altTxt)
+      );
+      cartItemImg.appendChild(imgCartItem);
+
+      // Ajout du nom
+      const cartItemName = document.createElement("h2");
+      cartItemName.innerHTML = dataProduct.name;
+      cartItemContentDescription.appendChild(cartItemName);
+      // Ajout du prix
+
       const cartItemPrice = document.createElement("p");
-      cartItemPrice.innerHTML = dataPrice.price + " €";
+      cartItemPrice.innerHTML = dataProduct.price + " €";
       cartItemPrice.classList.add("itemPrice");
       cartItemContentDescription.appendChild(cartItemPrice);
     });
@@ -196,109 +200,150 @@ for (const productPrice of getPanier) {
 }
 
 // Création de variables pour les différents éléments du formulaire
+
 const cartOrderForm = document.querySelector(".cart__order__form");
 
-// Prénom
+const cartOrderFormQuestion = document.querySelectorAll(
+  ".cart__order__form__question"
+);
+
 const firstNameClient = document.getElementById("firstName");
 const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 
-// Nom
 const lastNameClient = document.getElementById("lastName");
 const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
 
-// Adresse
-const adressClient = document.getElementById("address");
+const addressClient = document.getElementById("address");
 const addressErrorMsg = document.getElementById("addressErrorMsg");
 
-// Ville
 const cityClient = document.getElementById("city");
 const cityErrorMsg = document.getElementById("cityErrorMsg");
 
-// Email
 const emailClient = document.getElementById("email");
 const emailErrorMsg = document.getElementById("emailErrorMsg");
 
 // Bouton "Confirmer"
 const orderBtn = document.getElementById("order");
 
-// Création d'un évènement à la validation du formulaire
-cartOrderForm.addEventListener("submit", (event) => {
-  // Ajout d'un preventDefaut pour empêcher la page de recharger au click
-  event.preventDefault();
+// Création de variables pour les valeurs du formulaire
+let firstNameValue, lastNameValue, addressValue, cityValue, emailValue;
 
-  // Création d'un objet formulaire contenant les données du formulaire
-  const formulaireValues = {
-    firstName: firstNameClient.value,
-    lastName: lastNameClient.value,
-    adress: adressClient.value,
-    city: cityClient.value,
-    email: emailClient.value,
-  };
+// Création de variable Regex pour les prénom ,nom et ville
+const regexName = /^[a-zA-ZÀ-ÿ-\s]{3,20}$/;
 
-  // Création de variable Regex pour les prénom ,nom et ville
-  const regexName = /^[a-zA-ZÀ-ÿ-\s]{3,20}$/;
+// Création d'une variable Regex pour l'adresse
+const regexAddress = /^[0-9]+[\s]+[a-zA-ZÀ-ÿ-\s]+$/;
 
-  // Création d'une variable Regex pour l'adresse
-  const regexAddress = /^[a-zA-ZÀ-ÿ0-9-\s]+$/;
+// Création d'une variable Regex pour l'email
+const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-  // Création d'une variable Regex pour l'email
-  const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-
-  // Envoie des valeurs validées du formulaire vers le local storage
-  if (
-    regexName.test(firstNameClient.value) == true &&
-    regexName.test(lastNameClient.value) == true &&
-    regexAddress.test(adressClient.value) == true &&
-    regexName.test(cityClient.value) == true &&
-    regexEmail.test(emailClient.value) == true
-  ) {
-    localStorage.setItem("client", JSON.stringify(formulaireValues));
-  }
-
-  // Ajout de conditions pour vérifier la validité des données du formulaire avec regex
-  // Prénom
+// Ajout de conditions pour vérifier la validité des données du formulaire avec regex
+cartOrderFormQuestion[0].addEventListener("change", (text) => {
+  firstNameValue;
   if (regexName.test(firstNameClient.value) == true) {
     firstNameErrorMsg.innerHTML = "";
+    firstNameValue = text.target.value;
   } else {
-    firstNameErrorMsg.innerHTML =
-      "Le prénom ne doit contenir que des lettres ou des tirets.";
+    firstNameErrorMsg.innerHTML = "Champs invalide.";
   }
-  // Nom
+});
+
+cartOrderFormQuestion[1].addEventListener("change", (text) => {
+  lastNameValue;
   if (regexName.test(lastNameClient.value) == true) {
     lastNameErrorMsg.innerHTML = "";
+    lastNameValue = text.target.value;
   } else {
-    lastNameErrorMsg.innerHTML =
-      "Le nom ne doit contenir que des lettres ou des tirets.";
+    lastNameErrorMsg.innerHTML = "Le nom est invalide.";
   }
-  // Adresse
-  if (regexAddress.test(adressClient.value) == true) {
+});
+
+cartOrderFormQuestion[2].addEventListener("change", (text) => {
+  addressValue;
+  if (regexAddress.test(addressClient.value) == true) {
     addressErrorMsg.innerHTML = "";
+    addressValue = text.target.value;
   } else {
     addressErrorMsg.innerHTML = "L'adresse est invalide.";
   }
-  // Ville
+});
+
+cartOrderFormQuestion[3].addEventListener("change", (text) => {
+  cityValue;
   if (regexName.test(cityClient.value) == true) {
     cityErrorMsg.innerHTML = "";
+    cityValue = text.target.value;
   } else {
     cityErrorMsg.innerHTML = "Le nom de la ville est invalide.";
   }
-  // Email
+});
+
+cartOrderFormQuestion[4].addEventListener("change", (text) => {
+  emailValue;
   if (regexEmail.test(emailClient.value) == true) {
     emailErrorMsg.innerHTML = "";
+    emailValue = text.target.value;
   } else {
     emailErrorMsg.innerHTML = "L'email est invalide.";
   }
 });
 
-// Garder les données du formulaire en cas de changement de page
+// Création d'un évènement à la validation du formulaire
+cartOrderForm.addEventListener("submit", (event) => {
+  // Ajout d'un preventDefaut pour empêcher la page de recharger au click
+  event.preventDefault();
 
-// Création d'une variable qui va récuperer les informations client du local storage
-const clientData = JSON.parse(localStorage.getItem("client"));
-if (clientData != null) {
-  // Ajout des informations dans les champs de texte
-  firstNameClient.value = clientData.firstName;
-  lastNameClient.value = clientData.lastName;
-  adressClient.value = clientData.adress;
-  cityClient.value = clientData.city;
-  emailClient.value = clientData.email;
-}
+  // Envoie des valeurs validées du formulaire vers le local storage ainsi que les id des produits sous forme de tableau
+  if (
+    firstNameValue &&
+    lastNameValue &&
+    addressValue &&
+    cityValue &&
+    emailValue
+  ) {
+    //  Récupération de l'id des produits dans un tableau pour l'envoi vers le back-end
+    const idData = JSON.parse(localStorage.getItem("cart"));
+    let products = [];
+
+    // Boucle pour récupérer les id de chaques produits du panier dans le tableau
+    for (const idProduct of idData) {
+      products.push(idProduct.id);
+    }
+
+    // Envoie du formulaire validé et des id des produits vers le local storage
+    const clientData = {
+      // Création d'un objet formulaire contenant les données du formulaire
+      contact: {
+        firstName: firstNameValue,
+        lastName: lastNameValue,
+        address: addressValue,
+        city: cityValue,
+        email: emailValue,
+      },
+      products,
+    };
+
+    // Requête POST sur l'API
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(clientData),
+    })
+      // Récupération des données dans la réponse de la requête
+      .then((response) => response.json())
+      .then((promise) => {
+        let responseServer = promise;
+        console.log(responseServer);
+
+        // Récupération de l'id de la commande
+        const orderedId = responseServer.orderId;
+        console.log(orderedId);
+
+        // Lien vers la page de confirmation
+        window.location = "confirmation.html?id=" + orderedId;
+      });
+  }
+});

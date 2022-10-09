@@ -71,9 +71,6 @@ fetch("http://localhost:3000/api/products/" + urlId)
       // Récupération dans un tableau des informations pour le panier
       let infoKanap = {
         id: idKanap,
-        img: imgKanap,
-        alt: altKanap,
-        name: nameKanap,
         color: colorValue,
         quantity: Number(quantityValue),
       };
