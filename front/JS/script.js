@@ -1,3 +1,5 @@
+//------ Affichage des produits dans la page d'accueil à partir des données de l'API ------//
+
 // Envoie de la requête HTTP auprès du service web
 fetch("http://localhost:3000/api/products")
   // Récupération des données depuis l'API

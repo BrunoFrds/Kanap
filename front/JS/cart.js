@@ -1,6 +1,7 @@
+//------ Affichage des produits séléctionnés dans la page panier ------//
+
 // Récupération des données dans le local Storage
 let getPanier = JSON.parse(localStorage.getItem("cart"));
-console.log(getPanier);
 
 // Création d'une boucle qui va parcourir chaque produit dans le panier
 for (const produitPanier of getPanier) {
@@ -30,7 +31,8 @@ for (const produitPanier of getPanier) {
   cartItemColor.innerHTML = produitPanier.color;
   cartItemContentDescription.appendChild(cartItemColor);
 
-  //--- Création et ajout du nom, du prix et de l'image à partir des données de l'API ---
+  //Création et ajout du nom, du prix et de l'image à partir des données de l'API
+
   // Envoie de la requête HTTP auprès du service web
   fetch("http://localhost:3000/api/products/" + produitPanier.id)
     // Récupération des données depuis l'API
@@ -52,13 +54,15 @@ for (const produitPanier of getPanier) {
       const cartItemName = document.createElement("h2");
       cartItemName.innerHTML = dataProduct.name;
       cartItemContentDescription.appendChild(cartItemName);
-      // Ajout du prix
 
+      // Ajout du prix
       const cartItemPrice = document.createElement("p");
       cartItemPrice.innerHTML = dataProduct.price + " €";
       cartItemPrice.classList.add("itemPrice");
       cartItemContentDescription.appendChild(cartItemPrice);
     });
+
+  //--- Possibilité de changer la quantité ---//
 
   // Création et ajout de la div cart__item__content__settings
   const cartItemContentSettings = document.createElement("div");
@@ -86,6 +90,28 @@ for (const produitPanier of getPanier) {
   itemQuantity.setAttribute("data-color", produitPanier.color);
   itemQuantity.setAttribute("data-value", produitPanier.quantity);
 
+  // Création d'un évènement au changement de la valeur dans le champs de texte
+  itemQuantity.addEventListener("change", (event) => {
+    // Création d'une variable pour la nouvelle valeur de l'input
+    let inputValue = event.target.valueAsNumber;
+
+    // Modification de la data-value avec la nouvelle valeur
+    itemQuantity.setAttribute("data-value", inputValue);
+
+    if (
+      produitPanier.id == itemQuantity.dataset.id &&
+      produitPanier.color == itemQuantity.dataset.color
+    ) {
+      // Modification de la quantité du produit dans le tableau du panier et enregistrement dans le local storage
+      (produitPanier.quantity = Number(itemQuantity.dataset.value)),
+        localStorage.setItem("cart", JSON.stringify(getPanier));
+    }
+    // Rechargement de la page au changement de la quantité
+    window.location.reload();
+  });
+
+  //--- Possibilité de supprimer un produit ---//
+
   // Création et ajout du bouton supprimer
   const cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
@@ -97,62 +123,25 @@ for (const produitPanier of getPanier) {
   // Création d'une dataset pour l'id et la couleur des produits dans les boutons "supprimer"
   buttonDelete.setAttribute("data-id", produitPanier.id);
   buttonDelete.setAttribute("data-color", produitPanier.color);
-}
 
-// Création d'une variable pour les inputs
-let inputQuantity = document.querySelectorAll(".itemQuantity");
-
-// Création d'une boucle qui va parcourir la nodeList contenant les inputs des différents produits
-for (const newQuantity of inputQuantity) {
-  // Création d'un évènement au changement de la valeur dans le champs de texte
-  newQuantity.addEventListener("change", (event) => {
-    // Rechargement de la page au changement de la quantité
-    window.location.reload();
-
-    // Création d'une variable pour la nouvelle valeur de l'input
-    let inputValue = event.target.valueAsNumber;
-
-    // Modification de la data-value avec la nouvelle valeur
-    newQuantity.setAttribute("data-value", inputValue);
-
-    // Création d'une boucle qui va parcourir chaque produit dans le panier
-    for (const inputItem of getPanier) {
-      if (
-        inputItem.id == newQuantity.dataset.id &&
-        inputItem.color == newQuantity.dataset.color
-      ) {
-        // Modification de la quantité du produit dans le tableau du panier et enregistrement dans le local storage
-        (inputItem.quantity = Number(newQuantity.dataset.value)),
-          localStorage.setItem("cart", JSON.stringify(getPanier));
-      }
-    }
-  });
-}
-
-// Création d'un variable pour les boutons "supprimer"
-let btnDelete = document.querySelectorAll(".btnDelete");
-
-// Création d'une boucle qui va parcourir la nodelist contenant les boutons
-for (const deleteOption of btnDelete) {
   // Création d'un évènement au click du bouton "supprimer"
-  deleteOption.addEventListener("click", () => {
-    // Rechargement de la page au click
-    window.location.reload();
+  buttonDelete.addEventListener("click", () => {
+    // On filtre le panier
+    getPanier = getPanier.filter(
+      (product) =>
+        product.id != buttonDelete.dataset.id ||
+        product.color != buttonDelete.dataset.color
+    );
 
-    // Création d'une boucle qui va parcourir chaque produit dans le panier
-    for (let i = 0; i < getPanier.length; i++) {
-      if (
-        getPanier[i].id == deleteOption.dataset.id &&
-        getPanier[i].color == deleteOption.dataset.color
-      ) {
-        // Suppression de l'objet du panier
-        console.log(getPanier.splice(i, 1)),
-          // Suppression du produit du local storage
-          localStorage.setItem("cart", JSON.stringify(getPanier));
-      }
-    }
+    // On envoie le nouveau tableau de produit dans le local storage
+    localStorage.setItem("cart", JSON.stringify(getPanier));
+
+    // Rechargement de la page à la suppression du produit
+    window.location.reload();
   });
 }
+
+//--- Ajout de la quantité totale et du prix total ---/
 
 // Création d'une variable pour le span "totalQuantity"
 const totalQuantity = document.getElementById("totalQuantity");
@@ -199,13 +188,11 @@ for (const productPrice of getPanier) {
     });
 }
 
+//------ Formulaire ------//
+
 // Création de variables pour les différents éléments du formulaire
 
 const cartOrderForm = document.querySelector(".cart__order__form");
-
-const cartOrderFormQuestion = document.querySelectorAll(
-  ".cart__order__form__question"
-);
 
 const firstNameClient = document.getElementById("firstName");
 const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
@@ -222,11 +209,10 @@ const cityErrorMsg = document.getElementById("cityErrorMsg");
 const emailClient = document.getElementById("email");
 const emailErrorMsg = document.getElementById("emailErrorMsg");
 
-// Bouton "Confirmer"
-const orderBtn = document.getElementById("order");
-
 // Création de variables pour les valeurs du formulaire
 let firstNameValue, lastNameValue, addressValue, cityValue, emailValue;
+
+//--- Validation des champs de texte ---//
 
 // Création de variable Regex pour les prénom ,nom et ville
 const regexName = /^[a-zA-ZÀ-ÿ-\s]{3,20}$/;
@@ -238,7 +224,7 @@ const regexAddress = /^[0-9]+[\s]+[a-zA-ZÀ-ÿ-\s]+$/;
 const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 // Ajout de conditions pour vérifier la validité des données du formulaire avec regex
-cartOrderFormQuestion[0].addEventListener("change", (text) => {
+firstNameClient.addEventListener("change", (text) => {
   firstNameValue;
   if (regexName.test(firstNameClient.value) == true) {
     firstNameErrorMsg.innerHTML = "";
@@ -248,7 +234,7 @@ cartOrderFormQuestion[0].addEventListener("change", (text) => {
   }
 });
 
-cartOrderFormQuestion[1].addEventListener("change", (text) => {
+lastNameClient.addEventListener("change", (text) => {
   lastNameValue;
   if (regexName.test(lastNameClient.value) == true) {
     lastNameErrorMsg.innerHTML = "";
@@ -258,7 +244,7 @@ cartOrderFormQuestion[1].addEventListener("change", (text) => {
   }
 });
 
-cartOrderFormQuestion[2].addEventListener("change", (text) => {
+addressClient.addEventListener("change", (text) => {
   addressValue;
   if (regexAddress.test(addressClient.value) == true) {
     addressErrorMsg.innerHTML = "";
@@ -268,7 +254,7 @@ cartOrderFormQuestion[2].addEventListener("change", (text) => {
   }
 });
 
-cartOrderFormQuestion[3].addEventListener("change", (text) => {
+cityClient.addEventListener("change", (text) => {
   cityValue;
   if (regexName.test(cityClient.value) == true) {
     cityErrorMsg.innerHTML = "";
@@ -278,7 +264,7 @@ cartOrderFormQuestion[3].addEventListener("change", (text) => {
   }
 });
 
-cartOrderFormQuestion[4].addEventListener("change", (text) => {
+emailClient.addEventListener("change", (text) => {
   emailValue;
   if (regexEmail.test(emailClient.value) == true) {
     emailErrorMsg.innerHTML = "";
@@ -287,6 +273,8 @@ cartOrderFormQuestion[4].addEventListener("change", (text) => {
     emailErrorMsg.innerHTML = "L'email est invalide.";
   }
 });
+
+//--- Validation du formulaire et envoie vers la page confirmation ---//
 
 // Création d'un évènement à la validation du formulaire
 cartOrderForm.addEventListener("submit", (event) => {
@@ -303,6 +291,8 @@ cartOrderForm.addEventListener("submit", (event) => {
   ) {
     //  Récupération de l'id des produits dans un tableau pour l'envoi vers le back-end
     const idData = JSON.parse(localStorage.getItem("cart"));
+
+    // Création d'un tableau vide qui contiendra les id des produits
     let products = [];
 
     // Boucle pour récupérer les id de chaques produits du panier dans le tableau
@@ -322,6 +312,10 @@ cartOrderForm.addEventListener("submit", (event) => {
       },
       products,
     };
+    // Envoie vers le local storage
+    localStorage.setItem("client", JSON.stringify(clientData));
+
+    //--- Récupération du numéro de commande ---//
 
     // Requête POST sur l'API
     fetch("http://localhost:3000/api/products/order", {
@@ -334,13 +328,11 @@ cartOrderForm.addEventListener("submit", (event) => {
     })
       // Récupération des données dans la réponse de la requête
       .then((response) => response.json())
-      .then((promise) => {
-        let responseServer = promise;
-        console.log(responseServer);
+      .then((data) => {
+        let responseServer = data;
 
         // Récupération de l'id de la commande
         const orderedId = responseServer.orderId;
-        console.log(orderedId);
 
         // Lien vers la page de confirmation
         window.location = "confirmation.html?id=" + orderedId;

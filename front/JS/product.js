@@ -1,3 +1,5 @@
+//------ Affichage du produit séléctionné dans la page produit ------//
+
 // Récupération de l'URL de la page affiché
 const urlProduct = new URL(window.location.href);
 
@@ -38,6 +40,8 @@ fetch("http://localhost:3000/api/products/" + urlId)
     const itemDescription = document.getElementById("description");
     itemDescription.innerHTML = descriptionKanap;
 
+    //--- Selection des couleurs ---//
+
     // Création d'une variable pour la liste des couleurs
     const colorKanap = dataKanap.colors;
 
@@ -52,6 +56,8 @@ fetch("http://localhost:3000/api/products/" + urlId)
       // Ajout des options au select
       selectColors.appendChild(colorOptionNew);
     }
+
+    //--- Envoie des choix (couleur et quantité) vers la page Panier ---//
 
     // Selection des options pour la couleur et la quantité
     const colorChoice = document.getElementById("colors");
@@ -79,7 +85,7 @@ fetch("http://localhost:3000/api/products/" + urlId)
       let produitPanier = JSON.parse(localStorage.getItem("cart"));
 
       // Envoie des données du tableau dans le localStorage
-      if (produitPanier == null) {
+      if (produitPanier == null || produitPanier.length == 0) {
         produitPanier = [];
         produitPanier.push(infoKanap);
         localStorage.setItem("cart", JSON.stringify(produitPanier));
