@@ -28,13 +28,13 @@ for (const produitPanier of getPanier) {
 
   // Création et ajout de la couleur
   const cartItemColor = document.createElement("p");
-  cartItemColor.innerHTML = produitPanier.color;
+  cartItemColor.innerHTML = produitPanier[0].color;
   cartItemContentDescription.appendChild(cartItemColor);
 
   //Création et ajout du nom, du prix et de l'image à partir des données de l'API
 
   // Envoie de la requête HTTP auprès du service web
-  fetch("http://localhost:3000/api/products/" + produitPanier.id)
+  fetch("http://localhost:3000/api/products/" + produitPanier[0].id)
     // Récupération des données depuis l'API
     .then((response) => response.json())
 
@@ -82,13 +82,13 @@ for (const produitPanier of getPanier) {
   itemQuantity.setAttribute("name", "itemQuantity");
   itemQuantity.setAttribute("min", "1");
   itemQuantity.setAttribute("max", "100");
-  itemQuantity.value = produitPanier.quantity;
+  itemQuantity.value = produitPanier[0].quantity;
   cartItemContentSettingsQuantity.appendChild(itemQuantity);
 
   // Création d'une dataset pour l'id, la couleur des produits et la quantité dans les inputs
-  itemQuantity.setAttribute("data-id", produitPanier.id);
-  itemQuantity.setAttribute("data-color", produitPanier.color);
-  itemQuantity.setAttribute("data-value", produitPanier.quantity);
+  itemQuantity.setAttribute("data-id", produitPanier[0].id);
+  itemQuantity.setAttribute("data-color", produitPanier[0].color);
+  itemQuantity.setAttribute("data-value", produitPanier[0].quantity);
 
   // Création d'un évènement au changement de la valeur dans le champs de texte
   itemQuantity.addEventListener("change", (event) => {
@@ -99,11 +99,11 @@ for (const produitPanier of getPanier) {
     itemQuantity.setAttribute("data-value", inputValue);
 
     if (
-      produitPanier.id == itemQuantity.dataset.id &&
-      produitPanier.color == itemQuantity.dataset.color
+      produitPanier[0].id == itemQuantity.dataset.id &&
+      produitPanier[0].color == itemQuantity.dataset.color
     ) {
       // Modification de la quantité du produit dans le tableau du panier et enregistrement dans le local storage
-      (produitPanier.quantity = Number(itemQuantity.dataset.value)),
+      (produitPanier[0].quantity = Number(itemQuantity.dataset.value)),
         localStorage.setItem("cart", JSON.stringify(getPanier));
     }
     // Rechargement de la page au changement de la quantité
@@ -121,16 +121,16 @@ for (const produitPanier of getPanier) {
   cartItemContentSettingsDelete.appendChild(buttonDelete);
 
   // Création d'une dataset pour l'id et la couleur des produits dans les boutons "supprimer"
-  buttonDelete.setAttribute("data-id", produitPanier.id);
-  buttonDelete.setAttribute("data-color", produitPanier.color);
+  buttonDelete.setAttribute("data-id", produitPanier[0].id);
+  buttonDelete.setAttribute("data-color", produitPanier[0].color);
 
   // Création d'un évènement au click du bouton "supprimer"
   buttonDelete.addEventListener("click", () => {
     // On filtre le panier
     getPanier = getPanier.filter(
       (product) =>
-        product.id != buttonDelete.dataset.id ||
-        product.color != buttonDelete.dataset.color
+        product[0].id != buttonDelete.dataset.id ||
+        product[0].color != buttonDelete.dataset.color
     );
 
     // On envoie le nouveau tableau de produit dans le local storage
@@ -152,7 +152,7 @@ let totalQuantityValue = 0;
 // Création d'une boucle qui va parcourir les éléments du panier
 for (const productQuantity of getPanier) {
   // Nombre de produits total
-  totalQuantityValue += productQuantity.quantity;
+  totalQuantityValue += productQuantity[0].quantity;
 
   // Ajout du total dans le span
   totalQuantity.innerHTML = totalQuantityValue;
@@ -169,7 +169,7 @@ for (const productPrice of getPanier) {
   // Récupération du prix de chaque produit
 
   // Envoie de la requête HTTP auprès du service web
-  fetch("http://localhost:3000/api/products/" + productPrice.id)
+  fetch("http://localhost:3000/api/products/" + productPrice[0].id)
     // Récupération des données depuis l'API
     .then((response) => response.json())
 
@@ -178,7 +178,7 @@ for (const productPrice of getPanier) {
       const itemPrice = dataPrice.price;
 
       // Prix total de chaque lot d'article
-      let totalPriceProduct = productPrice.quantity * itemPrice;
+      let totalPriceProduct = productPrice[0].quantity * itemPrice;
 
       // Prix total du panier
       totalPriceValue += totalPriceProduct;
@@ -297,7 +297,7 @@ cartOrderForm.addEventListener("submit", (event) => {
 
     // Boucle pour récupérer les id de chaques produits du panier dans le tableau
     for (const idProduct of idData) {
-      products.push(idProduct.id);
+      products.push(idProduct[0].id);
     }
 
     // Envoie du formulaire validé et des id des produits vers le local storage

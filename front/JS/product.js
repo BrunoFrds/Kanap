@@ -57,12 +57,6 @@ fetch("http://localhost:3000/api/products/" + urlId)
       selectColors.appendChild(colorOptionNew);
     }
 
-    //--- Envoie des choix (couleur et quantité) vers la page Panier ---//
-
-    // Selection des options pour la couleur et la quantité
-    const colorChoice = document.getElementById("colors");
-    const quantityChoice = document.getElementById("quantity");
-
     // Création d'une variable pour le bouton "Ajouter au panier"
     const btnPanier = document.getElementById("addToCart");
 
@@ -70,51 +64,43 @@ fetch("http://localhost:3000/api/products/" + urlId)
     btnPanier.addEventListener("click", (Event) => {
       Event.preventDefault();
 
-      // Ajout du choix de la couleur et de la quantité dans une variable
-      const colorValue = colorChoice.value;
-      const quantityValue = quantityChoice.value;
+      let color = document.querySelector("#colors").value;
+      let quantityChoice = document.querySelector("#quantity").value;
+      let quantity = Number(quantityChoice);
+      let id = idKanap;
 
-      // Récupération dans un tableau des informations pour le panier
-      let infoKanap = {
-        id: idKanap,
-        color: colorValue,
-        quantity: Number(quantityValue),
-      };
+      //pour tester la boucle et l'arreter
+      let boucle = 0;
 
-      // Récupération des données du localStorage
+      // ajout des elt du panier dans un tableau
+      let infoKanap = [{ id, color, quantity }];
+
+      //Déclaration au format js de la clé produit stocké dans le local storage
       let produitPanier = JSON.parse(localStorage.getItem("cart"));
 
-      // Envoie des données du tableau dans le localStorage
-      if (produitPanier == null || produitPanier.length == 0) {
+      //Si le localstorage est vide, on créer tableau, on push le panier dedans et on stock dans localStorage
+      if (!produitPanier) {
         produitPanier = [];
         produitPanier.push(infoKanap);
         localStorage.setItem("cart", JSON.stringify(produitPanier));
-
-        // Incrémentation de la quantité dans le localStorage quand l'id et la couleur sont identique
-      } else if (produitPanier != null) {
-        for (const infoPanier of produitPanier) {
+      }
+      //Avant de stock dans local storage, on verifie si nom et option sont =, si = alors on incremente qty
+      else {
+        for (let i = 0; i < produitPanier.length; i++) {
           if (
-            infoPanier.id == infoKanap.id &&
-            infoPanier.color == infoKanap.color
+            produitPanier[i][0].id === id &&
+            produitPanier[i][0].color === color
           ) {
-            (infoPanier.quantity =
-              Number(infoPanier.quantity) + infoKanap.quantity),
-              localStorage.setItem("cart", JSON.stringify(produitPanier));
+            produitPanier[i][0].quantity += quantity;
+            boucle = 1;
           }
         }
-
-        // Ajout d'un nouveau produit dans le local storage quand la couleur ou l'id sont différents
-        for (const infoPanier of produitPanier) {
-          if (
-            (infoPanier.id == infoKanap.id &&
-              infoPanier.color != infoKanap.color) ||
-            infoPanier.id != infoKanap.id
-          ) {
-            produitPanier.push(infoKanap),
-              localStorage.setItem("cart", JSON.stringify(produitPanier));
-          }
-          break;
+        //Si pas égale, on stop la boucle et on push le panier dans local storage
+        if (boucle == 0) {
+          produitPanier.push(infoKanap);
         }
+
+        localStorage.setItem("cart", JSON.stringify(produitPanier));
       }
     });
   });
