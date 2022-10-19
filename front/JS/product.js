@@ -64,29 +64,32 @@ fetch("http://localhost:3000/api/products/" + urlId)
     btnPanier.addEventListener("click", (Event) => {
       Event.preventDefault();
 
+      // Création de variables pour la couleur, la quantité et l'id
       let color = document.querySelector("#colors").value;
       let quantityChoice = document.querySelector("#quantity").value;
       let quantity = Number(quantityChoice);
       let id = idKanap;
 
-      //pour tester la boucle et l'arreter
+      //Création d'une variable pour tester et stopper la boucle
       let boucle = 0;
 
-      // ajout des elt du panier dans un tableau
+      // Création d'un tableau contenant l'id, la couleur et la quantité
       let infoKanap = [{ id, color, quantity }];
 
-      //Déclaration au format js de la clé produit stocké dans le local storage
+      // Récupération des données du local storage
       let produitPanier = JSON.parse(localStorage.getItem("cart"));
 
-      //Si le localstorage est vide, on créer tableau, on push le panier dedans et on stock dans localStorage
+      // Condition pour savoir si le local storage est vide ou pas
+      // Si vide, alors création d'un nouveau tableau et ajout du produit
       if (!produitPanier) {
         produitPanier = [];
         produitPanier.push(infoKanap);
         localStorage.setItem("cart", JSON.stringify(produitPanier));
       }
-      //Avant de stock dans local storage, on verifie si nom et option sont =, si = alors on incremente qty
+      // Si non vide, alors création d'une boucle qui va parcourir les produits du local storage
       else {
         for (let i = 0; i < produitPanier.length; i++) {
+          // Si l'id et la couleur sont les mêmes alors on incrémente la quantité
           if (
             produitPanier[i][0].id === id &&
             produitPanier[i][0].color === color
@@ -95,7 +98,7 @@ fetch("http://localhost:3000/api/products/" + urlId)
             boucle = 1;
           }
         }
-        //Si pas égale, on stop la boucle et on push le panier dans local storage
+        //Si l'id ou la couleur sont différentes, alors on ajoute le produit
         if (boucle == 0) {
           produitPanier.push(infoKanap);
         }
