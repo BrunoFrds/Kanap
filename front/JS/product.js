@@ -88,13 +88,10 @@ fetch("http://localhost:3000/api/products/" + urlId)
       }
       // Si non vide, alors création d'une boucle qui va parcourir les produits du local storage
       else {
-        for (let i = 0; i < produitPanier.length; i++) {
+        for (const infoProduit of produitPanier) {
           // Si l'id et la couleur sont les mêmes alors on incrémente la quantité
-          if (
-            produitPanier[i][0].id === id &&
-            produitPanier[i][0].color === color
-          ) {
-            produitPanier[i][0].quantity += quantity;
+          if (infoProduit[0].id === id && infoProduit[0].color === color) {
+            infoProduit[0].quantity += quantity;
             boucle = 1;
           }
         }
